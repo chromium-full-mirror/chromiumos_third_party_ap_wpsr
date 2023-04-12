@@ -20,19 +20,20 @@ libsrc = [
   'imports/flashchips.c',
   'imports/writeprotect.c',
   'imports/writeprotect_ranges.c',
+  'shim/flashrom_shim.c',
 ]
 inc = include_directories(['imports/include', 'shim/include'])
 
-shim = library('shim', 'shim/flashrom_shim.c', include_directories : inc)
-
 ap_wpsrlib = library('ap_wpsr',
-                        libsrc,
-                        include_directories : inc,
-                        link_with : shim,
-                        install : true)
+  libsrc,
+  include_directories : inc,
+  install : true
+)
 
 executable('ap_wpsr',
-  link_with : [shim, ap_wpsrlib],
+  link_with : ap_wpsrlib,
   include_directories : inc,
   sources : 'main.c',
+  install : true,
+  install_dir : get_option('sbindir')
 )
