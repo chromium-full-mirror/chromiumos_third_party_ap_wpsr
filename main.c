@@ -36,16 +36,10 @@
 
 static const struct flashchip *find_chip(const char *name)
 {
-	const struct flashchip *chip = NULL;
-
-	for (chip = flashchips; chip && chip->name; chip++)
+	for (const struct flashchip *chip = flashchips; chip && chip->name; chip++)
 		if (!strcmp(chip->name, name))
-			break;
-
-	if (!chip || !chip->name)
-		printf("Error: Unknown chip '%s' specified.\n", name);
-
-	return chip;
+			return chip;
+	return NULL;
 }
 
 static const char *get_wp_error_str(int err)
