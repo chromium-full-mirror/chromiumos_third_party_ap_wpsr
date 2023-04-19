@@ -162,13 +162,28 @@ enum flashrom_wp_result print_wp_regmasks(const char *name, uint32_t wp_start, u
 	return ret;
 }
 
+void print_help(int argc, char* argv[])
+{
+	fprintf(stderr, "Usage: %s [OPTIONS]\n\n"
+		        "Required arguments:\n"
+			"  -n, --name=name      Name of chip to \n"
+			"                       calculate SR values for\n"
+			"  -s, --start=addr     Start address of protection range\n"
+			"  -l, --length=addr    Length of protection range\n\n"
+			"Optional arguments:\n"
+			"  -h, --help           Print help and exit\n\n",
+			argv[0]);
+}
+
 int main(int argc, char* argv[])
 {
 	char *name = NULL;
 	uint32_t wp_start = 0, wp_len = 0; /* default */
+	bool wp_start_set = false, wp_len_set = false;
 
-	static const char optstr[] = "n:s:l:";
+	static const char optstr[] = "hn:s:l:";
 	static const struct option long_options[] = {
+		{"help",		0, NULL, 'h'},
 		{"name",		1, NULL, 'n'},
 		{"start",		1, NULL, 's'},
 		{"length",		1, NULL, 'l'},
@@ -177,23 +192,45 @@ int main(int argc, char* argv[])
 	int opt, opt_idx = 0;
 	while ((opt = getopt_long(argc, argv, optstr, long_options, &opt_idx)) != EOF) {
 		switch (opt) {
-			case 'n': name = optarg;
-				  break;
-			case 's': wp_start = strtoul(optarg, NULL, 0);
-				  break;
-			case 'l': wp_len = strtoul(optarg, NULL, 0);
-				  break;
+			case 'n':
+				name = optarg;
+				break;
+			case 's':
+				wp_start = strtoul(optarg, NULL, 0);
+				wp_start_set = true;
+				break;
+			case 'l':
+				wp_len = strtoul(optarg, NULL, 0);
+				wp_len_set = true;
+				break;
+			case 'h':
 			default:
-				fprintf(stderr, "Usage: %s [-nsl]\n", argv[0]);
-				exit(EXIT_FAILURE);
+				print_help(argc, argv);
+				return 0;
 		}
 	}
+
+	if (!name) {
+		fprintf(stderr, "Error: --name <chip name> must be provided\n");
+		return 1;
+	}
+
+	if (!wp_start_set) {
+		fprintf(stderr, "Error: --start <address> must be provided\n");
+		return 1;
+	}
+
+	if (!wp_len_set) {
+		fprintf(stderr, "Error: --length <len> must be provided\n");
+		return 1;
+	}
+
 	printf(" > requested chip name: '%s' with start: 0x%x and len: 0x%x.\n", name, wp_start, wp_len);
 
 	enum flashrom_wp_result ret = print_wp_regmasks(name, wp_start, wp_len);
 	if (ret != FLASHROM_WP_OK) {
-		fprintf(stderr, "failed with: '%s'\n", get_wp_error_str(ret));
-		exit(1);
+		fprintf(stderr, "Error: '%s'\n", get_wp_error_str(ret));
+		return 1;
 	}
 
 	return 0;
