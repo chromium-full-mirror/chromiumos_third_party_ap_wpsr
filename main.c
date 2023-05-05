@@ -15,13 +15,6 @@
  *
  */
 
-/*
- * For entertainment purposes of MP devices only.
- * with thx, Edward O'Callaghan.
- *
- * Example: ./ap_ro_pcr -n "W25Q128.V" -s 0x40000 -l 0xFC0000
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
