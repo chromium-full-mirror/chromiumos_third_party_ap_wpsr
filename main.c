@@ -111,6 +111,14 @@ void print_register_state(uint8_t *reg_values, uint8_t *wp_bit_masks)
 		printf("0x%02x", wp_bit_masks[reg]);
 	}
 	printf("}.\n");
+
+	printf(" * SR Value/Mask = ");
+	for (enum flash_reg reg = STATUS1; reg <= last_reg; reg++) {
+		if (reg != STATUS1)
+			printf(" ");
+		printf("0x%02X 0x%02X", reg_values[reg], wp_bit_masks[reg]);
+	}
+	printf("\n");
 }
 
 enum flashrom_wp_result print_wp_regmasks(const char *name, uint32_t wp_start, uint32_t wp_len)
