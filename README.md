@@ -31,7 +31,29 @@ back to the canonical flashrom flashchips database upstream.
 usage
 -----
 
-An example usage could be `./ap_ro_pcr -n "W25Q128.V" -s 0x40000 -l 0xFC0000`.
+An example usage could be `./ap_wpsr -n "W25Q128.V" -s 0x40000 -l 0xFC0000`.
+
+finding chip names
+------------------
+
+The ap_wpsr tool needs to be given the name of the flashrom chip entry to use
+for calculating mask,value pairs. This name may not match the vendor name, for
+example the chip "W25Q128FVSIG" corresponds to a flashrom entry called
+"W25Q128.V".
+
+These steps should be followed to find the flashrom chip name for your chip:
+
+* Check the chip's datasheet to find the vendor and device ID values.
+* Inspect flashchips.h to find matching ID define macros.
+* Inspect flashchips.c to find the chip entry that uses those ID macros
+* If there are multiple flashrom chip entries with the same IDs, check all
+  of them against the datasheet to find the correct one.
+* Finally, check that the chip entry has a reg_bits field and that it matches
+  the datasheet *exactly*. Verify that all WP-related bits in the datasheet
+  are included in reg_bits and vice versa.
+* If there are no matching chip entries, create one for the chip and send a
+  patch to upstream flashrom for review.
+* Pass the matching entry's name to the tool via the `-n` option.
 
 src structure
 -------------
