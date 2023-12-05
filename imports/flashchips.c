@@ -572,7 +572,7 @@ const struct flashchip flashchips[] = {
 		.total_size	= 512,
 		.page_size	= 64 * 1024,
 		.feature_bits	= FEATURE_ADDR_2AA | FEATURE_SHORT_RESET,
-		.tested		= TEST_OK_PRE,
+		.tested		= TEST_OK_PREW,
 		.probe		= PROBE_JEDEC,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	=
@@ -745,7 +745,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_AMIC_A25L032, /* bit5: T/B, bit6: prot size */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP2_SRWD, /* TODO: 2nd status reg (read with 0x35) */
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -1275,7 +1275,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_AMIC_A25L032, /* bit5: T/B, bit6: prot size */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP2_SRWD, /* TODO: 2nd status reg (read with 0x35) */
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -1315,7 +1315,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_AMIC_A25L032, /* bit5: T/B, bit6: prot size */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP2_SRWD, /* TODO: 2nd status reg (read with 0x35) */
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -1480,6 +1480,45 @@ const struct flashchip flashchips[] = {
 		.write		= WRITE_JEDEC1,
 		.read		= READ_MEMMAPPED,
 		.voltage	= {3000, 3600},
+	},
+
+	{
+		.vendor		= "Atmel",
+		.name		= "AT25DF011",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= ATMEL_ID,
+		.model_id	= ATMEL_AT25DF011,
+		.total_size	= 128,
+		.page_size	= 256,
+		/* OTP: 128B total, 64B pre-programmed; read 0x77; write 0x9B */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 32} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 4} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {32 * 1024, 4} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {128 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {128 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_AT25DF,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_AT2X_GLOBAL_UNPROTECT,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {1650, 3600},
 	},
 
 	{
@@ -2646,7 +2685,7 @@ const struct flashchip flashchips[] = {
 		.total_size	= 128,
 		.page_size	= 128,
 		.feature_bits	= FEATURE_LONG_RESET,
-		.tested		= TEST_OK_PRE,
+		.tested		= TEST_OK_PREW,
 		.probe		= PROBE_JEDEC,
 		.probe_timing	= 10000, /* 10mS, Enter=Exec */
 		.block_erasers	=
@@ -2762,7 +2801,7 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_WRITE_AT45DB,
 		.read		= SPI_READ_AT45DB,
 		.voltage	= {2700, 3600},
-		.gran		= write_gran_1056bytes,
+		.gran		= WRITE_GRAN_1056BYTES,
 	},
 
 	{
@@ -3015,7 +3054,7 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_WRITE_AT45DB,
 		.read		= SPI_READ_AT45DB_E8, /* 3 address and 4 dummy bytes */
 		.voltage	= {2700, 3600},
-		.gran		= write_gran_528bytes,
+		.gran		= WRITE_GRAN_528BYTES,
 	},
 
 	{
@@ -3530,6 +3569,44 @@ const struct flashchip flashchips[] = {
 
 	{
 		.vendor		= "Boya/BoHong Microelectronics",
+		.name		= "B.25D80A",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= BOYA_BOHONG_ID,
+		.model_id	= BOYA_BOHONG_B__25D80A,
+		.total_size	= 1024,
+		.page_size	= 256,
+		.feature_bits	= FEATURE_WRSR_WREN,
+		.tested		= TEST_OK_PR,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 256} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 32} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 16} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {1 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {1 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP2_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP2_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2700, 3600},
+	},
+
+	{
+		.vendor		= "Boya/BoHong Microelectronics",
 		.name		= "B.25Q128AS",
 		.bustype	= BUS_SPI,
 		.manufacture_id	= BOYA_BOHONG_ID,
@@ -3638,7 +3715,7 @@ const struct flashchip flashchips[] = {
 		.write		= EDI_CHIP_WRITE,
 		.read		= EDI_CHIP_READ,
 		.voltage	= {2700, 3600},
-		.gran		= write_gran_128bytes,
+		.gran		= WRITE_GRAN_128BYTES,
 	},
 
 	{
@@ -5965,7 +6042,7 @@ const struct flashchip flashchips[] = {
 		.page_size	= 256,
 		/* OTP: 256B total; enter 0x3A */
 		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP,
-		.tested		= TEST_UNTESTED,
+		.tested		= TEST_OK_PREW,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	= {
@@ -6715,7 +6792,57 @@ const struct flashchip flashchips[] = {
 
 	{
 		.vendor		= "GigaDevice",
-		.name		= "GD25Q127C/GD25Q128C",
+		.name		= "GD25Q127C/GD25Q128E",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= GIGADEVICE_ID,
+		.model_id	= GIGADEVICE_GD25Q128,
+		.total_size	= 16384,
+		.page_size	= 256,
+		/* OTP: 3072B total; read 0x48; write 0x42, erase 0x44 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_WRSR2,
+		.tested		= TEST_OK_PREWB,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 4096} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 256} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {16 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {16 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		/* TODO: 2nd status reg (read 0x35, write 0x31) and 3rd status reg (read 0x15, write 0x11) */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP4_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP4_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and multi I/O supported */
+		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.srl    = {STATUS2, 0, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}},
+			.tb     = {STATUS1, 5, RW}, /* Called BP3 in datasheet, acts like TB */
+			.sec    = {STATUS1, 6, RW}, /* Called BP4 in datasheet, acts like SEC */
+			.cmp    = {STATUS2, 6, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
+	},
+
+	{
+		.vendor		= "GigaDevice",
+		.name		= "GD25Q128C",
 		.bustype	= BUS_SPI,
 		.manufacture_id	= GIGADEVICE_ID,
 		.model_id	= GIGADEVICE_GD25Q128,
@@ -6849,7 +6976,7 @@ const struct flashchip flashchips[] = {
 		.model_id	= GIGADEVICE_GD25Q256D,
 		.total_size	= 32768,
 		.page_size	= 256,
-		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA_WREN |
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA |
 				  FEATURE_WRSR_EXT2 | FEATURE_WRSR2 | FEATURE_WRSR3,
 		.tested		= TEST_OK_PREWB,
 		.probe		= PROBE_SPI_RDID,
@@ -7475,6 +7602,47 @@ const struct flashchip flashchips[] = {
 
 	{
 		.vendor		= "ISSI",
+		.name		= "IS25LP016",
+		.bustype	= BUS_SPI,
+		.manufacture_id = ISSI_ID_SPI,
+		.model_id	= ISSI_IS25LP016,
+		.total_size	= 2048,
+		.page_size	= 256,
+		/* OTP: 1024B total; read 0x48; write 0x42 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {4 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_D7,
+			}, {
+				.eraseblocks = { {32 * 1024, 64} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 32} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {2 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {2 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP3_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2300, 3600},
+	},
+
+	{
+		.vendor		= "ISSI",
 		.name		= "IS25LP064",
 		.bustype	= BUS_SPI,
 		.manufacture_id	= ISSI_ID_SPI,
@@ -7605,6 +7773,130 @@ const struct flashchip flashchips[] = {
 		.voltage	= {2300, 3600},
 	},
 
+
+	{
+		.vendor		= "ISSI",
+		.name		= "IS25LQ016",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= ISSI_ID_SPI,
+		.model_id	= ISSI_IS25LQ016,
+		.total_size	= 2048,
+		.page_size	= 256,
+		/* OTP: 256B total; read 0x4b; write 0xb1 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {4 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_D7,
+			}, {
+				.eraseblocks = { {64 * 1024, 32} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {2 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {2 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2300, 3600},
+	},
+
+	{
+		.vendor		= "ISSI",
+		.name		= "IS25WP016",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= ISSI_ID_SPI,
+		.model_id	= ISSI_IS25WP016,
+		.total_size	= 2048,
+		.page_size	= 256,
+		/* OTP: 1024B total; read 0x48; write 0x42 */
+		/* QPI enable 0x35, disable 0xF5 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {4 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_D7,
+			}, {
+				.eraseblocks = { {32 * 1024, 64} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 32} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {2 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {2 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.unlock		= SPI_DISABLE_BLOCKPROTECT,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {1650, 1950},
+	},
+
+	{
+		.vendor		= "ISSI",
+		.name		= "IS25WP020",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= ISSI_ID_SPI,
+		.model_id	= ISSI_IS25WP020,
+		.total_size	= 256,
+		.page_size	= 256,
+		/* OTP: 1024B total; read 0x48; write 0x42 */
+		/* QPI enable 0x35, disable 0xF5 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
+		.tested		= TEST_UNTESTED,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 64} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {4 * 1024, 64} },
+				.block_erase = SPI_BLOCK_ERASE_D7,
+			}, {
+				.eraseblocks = { {32 * 1024, 8} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 4} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {256 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {256 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.unlock		= SPI_DISABLE_BLOCKPROTECT,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {1650, 1950},
+	},
+
 	{
 		.vendor		= "ISSI",
 		.name		= "IS25WP032",
@@ -7649,6 +7941,48 @@ const struct flashchip flashchips[] = {
 
 	{
 		.vendor		= "ISSI",
+		.name		= "IS25WP040",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= ISSI_ID_SPI,
+		.model_id	= ISSI_IS25WP040,
+		.total_size	= 512,
+		.page_size	= 256,
+		/* OTP: 1024B total; read 0x48; write 0x42 */
+		/* QPI enable 0x35, disable 0xF5 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
+		.tested		= TEST_UNTESTED,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 128} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {4 * 1024, 128} },
+				.block_erase = SPI_BLOCK_ERASE_D7,
+			}, {
+				.eraseblocks = { {32 * 1024, 16} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 8} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {512 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {512 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.unlock		= SPI_DISABLE_BLOCKPROTECT,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {1650, 1950},
+	},
+
+	{
+		.vendor		= "ISSI",
 		.name		= "IS25WP064",
 		.bustype	= BUS_SPI,
 		.manufacture_id	= ISSI_ID_SPI,
@@ -7680,6 +8014,48 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_60,
 			}, {
 				.eraseblocks = { {8 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.unlock		= SPI_DISABLE_BLOCKPROTECT,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {1650, 1950},
+	},
+
+	{
+		.vendor		= "ISSI",
+		.name		= "IS25WP080",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= ISSI_ID_SPI,
+		.model_id	= ISSI_IS25WP080,
+		.total_size	= 1024,
+		.page_size	= 256,
+		/* OTP: 1024B total; read 0x48; write 0x42 */
+		/* QPI enable 0x35, disable 0xF5 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 256} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {4 * 1024, 256} },
+				.block_erase = SPI_BLOCK_ERASE_D7,
+			}, {
+				.eraseblocks = { {32 * 1024, 32} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 16} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {1024 * 1024, 1} },
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
@@ -7772,6 +8148,46 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_60,
 			}, {
 				.eraseblocks = { {32 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.unlock		= SPI_DISABLE_BLOCKPROTECT,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {1650, 1950},
+	},
+
+	{
+		.vendor		= "ISSI",
+		.name		= "IS25WQ040",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= ISSI_ID_SPI,
+		.model_id	= ISSI_IS25WQ040,
+		.total_size	= 512,
+		.page_size	= 256,
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 128} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {4 * 1024, 128} },
+				.block_erase = SPI_BLOCK_ERASE_D7,
+			}, {
+				.eraseblocks = { {32 * 1024, 16} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 8} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {512 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {512 * 1024, 1} },
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
@@ -8606,6 +9022,44 @@ const struct flashchip flashchips[] = {
 
 	{
 		.vendor		= "Macronix",
+		.name		= "MX25V16066", /* was called KH25V16066 in rev v1.3 */
+		.bustype	= BUS_SPI,
+		.manufacture_id	= MACRONIX_ID,
+		.model_id	= MACRONIX_MX25L1605,
+		.total_size	= 2048, /* 16M-bits */
+		.page_size	= 256,
+		.feature_bits	= FEATURE_WRSR_WREN,
+		.tested		= TEST_OK_PR,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 64} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 32} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {2 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {2 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			},
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP3_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ, /* Fast read (0x0B) supported */
+		.voltage	= {2700, 3600},
+	},
+
+	{
+		.vendor		= "Macronix",
 		.name		= "MX25L1605A/MX25L1606E/MX25L1608E",
 		.bustype	= BUS_SPI,
 		.manufacture_id	= MACRONIX_ID,
@@ -9027,6 +9481,46 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and dual I/O supported */
 		.voltage	= {2700, 3600}, /* 33F 2.65V..3.6V */
+	},
+
+	{
+		.vendor		= "Macronix",
+		.name		= "MX25L3255E",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= MACRONIX_ID,
+		.model_id	= MACRONIX_MX25L3255E,
+		.total_size	= 4096,
+		.page_size	= 256,
+		/* OTP: 4K total; enter 0xB1, exit 0xC1 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 128} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 64} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {4 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {4 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			},
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP3_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		/* Fast read (0x0B), 2x and 4x I/O supported */
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2700, 3600},
 	},
 
 	{
@@ -9576,6 +10070,112 @@ const struct flashchip flashchips[] = {
 
 	{
 		.vendor		= "Macronix",
+		.name		= "MX25V4035F",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= MACRONIX_ID,
+		.model_id	= MACRONIX_MX25V4035F,
+		.total_size	= 512,
+		.page_size	= 256,
+		/* OTP: 8KiB total; enter 0xB1, exit 0xC1 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI | FEATURE_SCUR,
+		.tested		= TEST_UNTESTED,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { { 4 * 1024, 128} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024,  16} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024,   8} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {512 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD, /* bit6 is quad enable */
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP3_SRWD,
+		.write		= SPI_CHIP_WRITE256, /* Multi I/O supported */
+		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and multi I/O supported */
+		.voltage	= {2300, 3600},
+	},
+	{
+		.vendor		= "Macronix",
+		.name		= "MX25V8035F",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= MACRONIX_ID,
+		.model_id	= MACRONIX_MX25V8035F,
+		.total_size	= 1024,
+		.page_size	= 256,
+		/* OTP: 8KiB total; enter 0xB1, exit 0xC1 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI | FEATURE_SCUR,
+		.tested		= TEST_UNTESTED,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { { 4 * 1024, 256} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024,  32} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024,  16} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {1 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD, /* bit6 is quad enable */
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP3_SRWD,
+		.write		= SPI_CHIP_WRITE256, /* Multi I/O supported */
+		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and multi I/O supported */
+		.voltage	= {2300, 3600},
+	},
+	{
+		.vendor		= "Macronix",
+		.name		= "MX25V1635F",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= MACRONIX_ID,
+		.model_id	= MACRONIX_MX25V1635F,
+		.total_size	= 2048,
+		.page_size	= 256,
+		/* OTP: 8KiB total; enter 0xB1, exit 0xC1 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI | FEATURE_SCUR,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { { 4 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024,  64} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024,  32} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {2 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD, /* bit6 is quad enable */
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP3_SRWD,
+		.write		= SPI_CHIP_WRITE256, /* Multi I/O supported */
+		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and multi I/O supported */
+		.voltage	= {2300, 3600},
+	},
+
+	{
+		.vendor		= "Macronix",
 		.name		= "MX25U12835F",
 		.bustype	= BUS_SPI,
 		.manufacture_id	= MACRONIX_ID,
@@ -9702,6 +10302,63 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256, /* Multi I/O supported */
 		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and multi I/O supported */
 		.voltage	= {1650, 2000},
+	},
+
+	{
+		.vendor		= "Macronix",
+		.name		= "MX25U25643G",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= MACRONIX_ID,
+		.model_id	= MACRONIX_MX25U25635F,
+		.total_size	= 32768,
+		.page_size	= 256,
+		/* OTP: 512B total; enter 0xB1, exit 0xC1 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI | FEATURE_4BA | FEATURE_CFGR | FEATURE_SCUR,
+		.tested		= TEST_OK_PREWB,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 8192} },
+				.block_erase = SPI_BLOCK_ERASE_21,
+			}, {
+				.eraseblocks = { {4 * 1024, 8192} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_5C,
+			}, {
+				.eraseblocks = { {32 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_DC,
+			}, {
+				.eraseblocks = { {64 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {32 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {32 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		/* TODO: security register */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD, /* bit6 is quad enable */
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP3_SRWD,
+		.write		= SPI_CHIP_WRITE256, /* Multi I/O supported */
+		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and multi I/O supported */
+		.voltage	= {1650, 2000},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}, {STATUS1, 5, RW}},
+			.tb     = {CONFIG, 3, OTP},
+			.wps    = {SECURITY, 7, OTP}, /* This bit is set by WPSEL command */
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	{
@@ -10417,6 +11074,46 @@ const struct flashchip flashchips[] = {
 			}
 		},
 		/* TODO: security register and SBLK/SBULK, configuration register */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD, /* bit6 is quad enable */
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP3_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ, /* Fast read (0x0B) supported */
+		.voltage	= {2700, 3600},
+	},
+
+	{
+		.vendor		= "Macronix",
+		.name		= "MX77L25650F",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= MACRONIX_ID,
+		.model_id	= MACRONIX_MX77L25650F,
+		.total_size	= 32768,
+		.page_size	= 256,
+		/* OTP: 512B total; enter 0xB1, exit 0xC1 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 8192} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {32 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {32 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		/* TODO: block WP, security register, configuration register */
 		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD, /* bit6 is quad enable */
 		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP3_SRWD,
 		.write		= SPI_CHIP_WRITE256,
@@ -11997,8 +12694,8 @@ const struct flashchip flashchips[] = {
 		.page_size	= 256,
 		/* supports SFDP */
 		/* OTP: 64B total; read 0x4B, write 0x42 */
-		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA_WREN,
-		.tested		= TEST_UNTESTED,
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP,
+		.tested		= TEST_OK_PREW,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	=
@@ -13480,6 +14177,135 @@ const struct flashchip flashchips[] = {
 		.write		= WRITE_JEDEC1,
 		.read		= READ_MEMMAPPED,
 		.voltage	= {3000, 3600},
+	},
+
+	{
+		.vendor		= "PUYA",
+		.name		= "P25Q06H",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= PUYA_ID,
+		.model_id	= PUYA_P25Q06H,
+		.total_size	= 64,
+		.page_size	= 256,
+		/* supports SFDP */
+		/* OTP: 3 x 512 bytes */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP,
+		.tested		= TEST_UNTESTED,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {256, 256} },
+				.block_erase = SPI_BLOCK_ERASE_81,
+			}, {
+				.eraseblocks = { {4 * 1024, 16} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 2} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {64 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {64 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP4_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP4_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2300, 3600},
+	},
+
+	{
+		.vendor		= "PUYA",
+		.name		= "P25Q11H",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= PUYA_ID,
+		.model_id	= PUYA_P25Q11H,
+		.total_size	= 128,
+		.page_size	= 256,
+		/* supports SFDP */
+		/* OTP: 3 x 512 bytes */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP,
+		.tested		= TEST_UNTESTED,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {256, 512} },
+				.block_erase = SPI_BLOCK_ERASE_81,
+			}, {
+				.eraseblocks = { {4 * 1024, 32} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 4} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 2} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {128 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {128 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP4_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP4_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2300, 3600},
+	},
+
+	{
+		.vendor		= "PUYA",
+		.name		= "P25Q21H",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= PUYA_ID,
+		.model_id	= PUYA_P25Q21H,
+		.total_size	= 256,
+		.page_size	= 256,
+		/* supports SFDP */
+		/* OTP: 3 x 512 bytes */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {256, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_81,
+			}, {
+				.eraseblocks = { {4 * 1024, 64} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 8} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 4} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {256 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {256 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP4_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP4_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2300, 3600},
 	},
 
 	{
@@ -16468,7 +17294,7 @@ const struct flashchip flashchips[] = {
 		.page_size	= 256,
 		/* 4 x 256B Security Region (OTP) */
 		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_WRSR_EXT3 | FEATURE_OTP,
-		.tested		= TEST_UNTESTED,
+		.tested		= TEST_OK_PREW,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	=
@@ -17586,7 +18412,7 @@ const struct flashchip flashchips[] = {
 		/* OTP: 1024B total, 256B reserved; read 0x48; write 0x42, erase 0x44, read ID 0x4B */
 		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP |
 				  FEATURE_WRSR_EXT2 | FEATURE_WRSR2 | FEATURE_WRSR3,
-		.tested		= TEST_OK_PREW,
+		.tested		= TEST_OK_PREWB,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	=
@@ -17608,7 +18434,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -17657,7 +18483,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN,
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -17707,7 +18533,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -17755,7 +18581,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock      = SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock      = SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -17782,8 +18608,8 @@ const struct flashchip flashchips[] = {
 		.page_size	= 256,
 		/* supports SFDP */
 		/* OTP: 1024B total, 256B reserved; read 0x48; write 0x42, erase 0x44, read ID 0x4B */
-		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP,
-		.tested		= TEST_OK_PREW,
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_WRSR2,
+		.tested		= TEST_OK_PREWB,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	=
@@ -17805,11 +18631,21 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.srl    = {STATUS2, 0, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}},
+			.tb     = {STATUS1, 5, RW},
+			.sec    = {STATUS1, 6, RW},
+			.cmp    = {STATUS2, 6, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	{
@@ -17926,7 +18762,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -17981,7 +18817,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -18036,7 +18872,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -18091,7 +18927,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -18108,8 +18944,9 @@ const struct flashchip flashchips[] = {
 		.page_size	= 256,
 		/* supports SFDP */
 		/* OTP: 1024B total, 256B reserved; read 0x48; write 0x42, erase 0x44, read ID 0x4B */
-		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA,
-		.tested		= TEST_OK_PREW,
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA | FEATURE_WRSR2
+				  | FEATURE_WRSR3,
+		.tested		= TEST_OK_PREWB,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	=
@@ -18137,11 +18974,21 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {1700, 1950},
+		.reg_bits	=
+		{
+			.srp	= {STATUS1, 7, RW},
+			.srl	= {STATUS2, 0, RW},
+			.bp	= {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}, {STATUS1, 5, RW}},
+			.tb	= {STATUS1, 6, RW},
+			.cmp	= {STATUS2, 6, RW},
+			.wps	= {STATUS3, 2, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	{
@@ -18177,7 +19024,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -18228,7 +19075,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -18280,7 +19127,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -18331,7 +19178,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -18382,7 +19229,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -18434,7 +19281,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -18486,7 +19333,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock      = SPI_PRETTYPRINT_STATUS_REGISTER_BP2_TB_BPL,
+		.printlock      = SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP2_SRWD,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -18667,46 +19514,57 @@ const struct flashchip flashchips[] = {
 	},
 
 	{
-	.vendor         = "Winbond",
-	.name           = "W25Q512NW-IM",
-	.bustype        = BUS_SPI,
-	.manufacture_id = WINBOND_NEX_ID,
-	.model_id       = WINBOND_NEX_W25Q512NW_IM,
-	.total_size     = 64 * 1024,
-	.page_size      = 256,
-	.feature_bits   = FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA,
-	.tested         = TEST_OK_PREW,
-	.probe          = PROBE_SPI_RDID,
-	.probe_timing   = TIMING_ZERO,
-	.block_erasers  =
-	{
+		.vendor         = "Winbond",
+		.name           = "W25Q512NW-IM",
+		.bustype        = BUS_SPI,
+		.manufacture_id = WINBOND_NEX_ID,
+		.model_id       = WINBOND_NEX_W25Q512NW_IM,
+		.total_size     = 64 * 1024,
+		.page_size      = 256,
+		.feature_bits   = FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA  | FEATURE_WRSR2
+				  | FEATURE_WRSR3,
+		.tested         = TEST_OK_PREWB,
+		.probe          = PROBE_SPI_RDID,
+		.probe_timing   = TIMING_ZERO,
+		.block_erasers  =
 		{
-			.eraseblocks = { {4 * 1024, 16384} },
-			.block_erase = SPI_BLOCK_ERASE_21,
-		}, {
-			.eraseblocks = { {4 * 1024, 16384} },
-			.block_erase = SPI_BLOCK_ERASE_20,
-		}, {
-			.eraseblocks = { {32 * 1024, 2048} },
-			.block_erase = SPI_BLOCK_ERASE_52,
-		}, {
-			.eraseblocks = { {64 * 1024, 1024} },
-			.block_erase = SPI_BLOCK_ERASE_DC,
-		}, {
-			.eraseblocks = { {64 * 1024, 1024} },
-			.block_erase = SPI_BLOCK_ERASE_D8,
-		}, {
-			.eraseblocks = { {64 * 1024 * 1024, 1} },
-			.block_erase = SPI_BLOCK_ERASE_60,
-		}, {
-			.eraseblocks = { {64 * 1024 * 1024, 1} },
-			.block_erase = SPI_BLOCK_ERASE_C7,
-		}
-	},
-	.unlock         = SPI_DISABLE_BLOCKPROTECT,
-	.write          = SPI_CHIP_WRITE256,
-	.read           = SPI_CHIP_READ,
-	.voltage        = {1650, 1950},
+			{
+				.eraseblocks = { {4 * 1024, 16384} },
+				.block_erase = SPI_BLOCK_ERASE_21,
+			}, {
+				.eraseblocks = { {4 * 1024, 16384} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 2048} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_DC,
+			}, {
+				.eraseblocks = { {64 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {64 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {64 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.unlock         = SPI_DISABLE_BLOCKPROTECT,
+		.write          = SPI_CHIP_WRITE256,
+		.read           = SPI_CHIP_READ,
+		.voltage        = {1650, 1950},
+		.reg_bits       =
+		{
+			.srp	= {STATUS1, 7, RW},
+			.srl	= {STATUS2, 0, RW},
+			.bp	= {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}, {STATUS1, 5, RW}},
+			.tb	= {STATUS1, 6, RW},
+			.cmp	= {STATUS2, 6, RW},
+			.wps	= {STATUS3, 2, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	{
@@ -18742,7 +19600,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -18884,7 +19742,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -18934,7 +19792,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN, /* TODO: improve */
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -19100,6 +19958,14 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {2300, 3600},
+		.reg_bits	=
+		{
+			/* W25X05 is single 64KiB block without any smaller WP granularity */
+			/* According to datasheet W25X05 has 2 BP bits, any non-zero value protects ALL.*/
+			.srp    = {STATUS1, 7, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	{
@@ -19132,6 +19998,13 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}},
+			.tb     = {STATUS1, 5, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	{
@@ -19170,6 +20043,13 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}},
+			.tb     = {STATUS1, 5, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	{
@@ -19181,7 +20061,7 @@ const struct flashchip flashchips[] = {
 		.total_size	= 256,
 		.page_size	= 256,
 		.feature_bits	= FEATURE_WRSR_WREN,
-		.tested		= TEST_OK_PREW,
+		.tested		= TEST_OK_PREWB,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	=
@@ -19202,6 +20082,13 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}},
+			.tb     = {STATUS1, 5, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	{
@@ -19240,6 +20127,13 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}},
+			.tb     = {STATUS1, 5, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	{
@@ -19272,6 +20166,13 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}},
+			.tb     = {STATUS1, 5, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	{
@@ -19310,6 +20211,13 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}},
+			.tb     = {STATUS1, 5, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	{
@@ -19342,6 +20250,13 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}},
+			.tb     = {STATUS1, 5, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	/* W29EE011, W29EE012, W29C010M, W29C011A do not support probe_jedec according to the datasheet, but it works for newer(?) steppings. */
@@ -20162,6 +21077,44 @@ const struct flashchip flashchips[] = {
 
 	{
 		.vendor		= "XMC",
+		.name		= "XM25QH80B",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= ST_ID,
+		.model_id	= ST_M45PE80,
+		.total_size	= 1024,
+		.page_size	= 256,
+		.feature_bits	= FEATURE_WRSR_WREN,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 256} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 32} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 16} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {1 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {1 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP2_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2700, 3600},
+	},
+
+	{
+		.vendor		= "XMC",
 		.name		= "XM25QH64C",
 		.bustype	= BUS_SPI,
 		.manufacture_id	= ST_ID,
@@ -20169,7 +21122,7 @@ const struct flashchip flashchips[] = {
 		.total_size	= 8192,
 		.page_size	= 256,
 		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
-		.tested		= TEST_UNTESTED,
+		.tested		= TEST_OK_PREW,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	=
@@ -20238,6 +21191,54 @@ const struct flashchip flashchips[] = {
 
 	{
 		.vendor		= "XMC",
+		.name		= "XM25QH128A",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= ST_ID,
+		.model_id	= XMC_XM25QH128A,
+		.total_size	= 16384,
+		.page_size	= 256,
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI | FEATURE_WRSR2,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 4096} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 256} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {16 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {16 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.srl    = {STATUS2, 0, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}},
+			.tb     = {STATUS1, 5, RW},
+			.sec    = {STATUS1, 6, RW},
+			.cmp    = {STATUS2, 6, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
+	},
+
+	{
+		.vendor		= "XMC",
 		.name		= "XM25QH128C",
 		.bustype	= BUS_SPI,
 		.manufacture_id	= ST_ID,
@@ -20267,7 +21268,7 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_PLAIN,
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 		.unlock		= SPI_DISABLE_BLOCKPROTECT,
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
@@ -20336,8 +21337,8 @@ const struct flashchip flashchips[] = {
 		/* OTP: 1024B total, 256B reserved; read 0x48; write 0x42, erase 0x44, read ID 0x4B */
 		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA_ENTER_WREN |
 				  FEATURE_4BA_EAR_C5C8 | FEATURE_4BA_READ | FEATURE_4BA_FAST_READ |
-				  FEATURE_WRSR2,
-		.tested		= TEST_UNTESTED,
+				  FEATURE_4BA_WRITE | FEATURE_WRSR2,
+		.tested		= TEST_OK_PR,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	=
@@ -20385,7 +21386,8 @@ const struct flashchip flashchips[] = {
 		/* supports SFDP */
 		/* OTP: 1024B total, 256B reserved; read 0x48; write 0x42, erase 0x44, read ID 0x4B */
 		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA_ENTER_WREN
-			| FEATURE_4BA_EAR_C5C8 | FEATURE_4BA_READ | FEATURE_4BA_FAST_READ,
+			| FEATURE_4BA_EAR_C5C8 | FEATURE_4BA_READ | FEATURE_4BA_FAST_READ
+			| FEATURE_4BA_WRITE,
 		.tested		= TEST_UNTESTED,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
@@ -20413,6 +21415,81 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {1650, 1950},
+	},
+
+	{
+		.vendor		= "XTX Technology Limited",
+		.name		= "XT25F02E",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= XTX_ID,
+		.model_id	= XTX_XT25F02E,
+		.total_size	= 256,
+		.page_size	= 256,
+		.feature_bits	= FEATURE_WRSR_WREN,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 64} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {64 * 1024, 4} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {256 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {256 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP1_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP1_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2700, 3600},
+	},
+
+	{
+		.vendor		= "XTX Technology Limited",
+		.name		= "XT25F64B",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= XTX_ID,
+		.model_id	= XTX_XT25F64B,
+		.total_size	= 8 * 1024,
+		.page_size	= 256,
+		/* Supports SFDP */
+		/* OTP: 4 x 256 bytes */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 2048} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 256} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 128} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {8 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {8 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP4_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP4_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2700, 3600},
 	},
 
 	{

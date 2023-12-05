@@ -60,7 +60,7 @@ void *master_map_flash_region(const struct registered_master *mast,
 			      const char *descr, uintptr_t phys_addr, size_t len);
 void master_unmap_flash_region(const struct registered_master *mast,
 			       void *virt_addr, size_t len);
-/* NOTE: flashctx is not used in internal_delay. In this case, a context should be NULL. */
+/* NOTE: flashctx is not used in default_delay. In this case, a context should be NULL. */
 void programmer_delay(const struct flashrom_flashctx *flash, unsigned int usecs);
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
@@ -83,17 +83,17 @@ enum chipbustype {
  */
 enum write_granularity {
 	/* We assume 256 byte granularity by default. */
-	write_gran_256bytes = 0,/* If less than 256 bytes are written, the unwritten bytes are undefined. */
-	write_gran_1bit,	/* Each bit can be cleared individually. */
-	write_gran_1byte,	/* A byte can be written once. Further writes to an already written byte cause
+	WRITE_GRAN_256BYTES = 0,/* If less than 256 bytes are written, the unwritten bytes are undefined. */
+	WRITE_GRAN_1BIT,	/* Each bit can be cleared individually. */
+	WRITE_GRAN_1BYTE,	/* A byte can be written once. Further writes to an already written byte cause
 				 * its contents to be either undefined or to stay unchanged. */
-	write_gran_128bytes,	/* If less than 128 bytes are written, the unwritten bytes are undefined. */
-	write_gran_264bytes,	/* If less than 264 bytes are written, the unwritten bytes are undefined. */
-	write_gran_512bytes,	/* If less than 512 bytes are written, the unwritten bytes are undefined. */
-	write_gran_528bytes,	/* If less than 528 bytes are written, the unwritten bytes are undefined. */
-	write_gran_1024bytes,	/* If less than 1024 bytes are written, the unwritten bytes are undefined. */
-	write_gran_1056bytes,	/* If less than 1056 bytes are written, the unwritten bytes are undefined. */
-	write_gran_1byte_implicit_erase, /* EEPROMs and other chips with implicit erase and 1-byte writes. */
+	WRITE_GRAN_128BYTES,	/* If less than 128 bytes are written, the unwritten bytes are undefined. */
+	WRITE_GRAN_264BYTES,	/* If less than 264 bytes are written, the unwritten bytes are undefined. */
+	WRITE_GRAN_512BYTES,	/* If less than 512 bytes are written, the unwritten bytes are undefined. */
+	WRITE_GRAN_528BYTES,	/* If less than 528 bytes are written, the unwritten bytes are undefined. */
+	WRITE_GRAN_1024BYTES,	/* If less than 1024 bytes are written, the unwritten bytes are undefined. */
+	WRITE_GRAN_1056BYTES,	/* If less than 1056 bytes are written, the unwritten bytes are undefined. */
+	WRITE_GRAN_1BYTE_IMPLICIT_ERASE, /* EEPROMs and other chips with implicit erase and 1-byte writes. */
 };
 
 /*
@@ -323,7 +323,7 @@ enum block_erase_func {
 };
 
 enum blockprotect_func {
-	NO_BLOCKPROTECT_FUNC,
+	NO_BLOCKPROTECT_FUNC = 0, /* 0 indicates no unlock function set. */
 	SPI_DISABLE_BLOCKPROTECT,
 	SPI_DISABLE_BLOCKPROTECT_BP2_EP_SRWD,
 	SPI_DISABLE_BLOCKPROTECT_BP1_SRWD,
@@ -369,7 +369,6 @@ enum printlock_func {
 	PRINTLOCK_W39V080A,
 	PRINTLOCK_W39V080FA,
 	PRINTLOCK_W39V080FA_DUAL,
-	SPI_PRETTYPRINT_STATUS_REGISTER_AMIC_A25L032,
 	SPI_PRETTYPRINT_STATUS_REGISTER_AT25DF,
 	SPI_PRETTYPRINT_STATUS_REGISTER_AT25DF_SEC,
 	SPI_PRETTYPRINT_STATUS_REGISTER_AT25F,
@@ -385,6 +384,7 @@ enum printlock_func {
 	SPI_PRETTYPRINT_STATUS_REGISTER_BP2_EP_SRWD,
 	SPI_PRETTYPRINT_STATUS_REGISTER_BP2_SRWD,
 	SPI_PRETTYPRINT_STATUS_REGISTER_BP2_TB_BPL,
+	SPI_PRETTYPRINT_STATUS_REGISTER_SRWD_SEC_TB_BP2_WELWIP,
 	SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD,
 	SPI_PRETTYPRINT_STATUS_REGISTER_BP4_SRWD,
 	SPI_PRETTYPRINT_STATUS_REGISTER_DEFAULT_WELWIP,
@@ -395,6 +395,8 @@ enum printlock_func {
 	SPI_PRETTYPRINT_STATUS_REGISTER_SST25VF016,
 	SPI_PRETTYPRINT_STATUS_REGISTER_SST25VF040B,
 };
+typedef int (printlockfunc_t)(struct flashctx *flash);
+printlockfunc_t *lookup_printlock_func_ptr(struct flashctx *flash);
 
 struct flashchip {
 	const char *vendor;
@@ -447,9 +449,7 @@ struct flashchip {
 	/*
 	 * Erase blocks and associated erase function. Any chip erase function
 	 * is stored as chip-sized virtual block together with said function.
-	 * The first one that fits will be chosen. There is currently no way to
-	 * influence that behaviour. For testing just comment out the other
-	 * elements or set the function pointer to NULL.
+	 * The logic for how to optimally select erase functions is in erasure_layout.c
 	 */
 	struct block_eraser {
 		struct eraseblock {
@@ -461,8 +461,8 @@ struct flashchip {
 		enum block_erase_func block_erase;
 	} block_erasers[NUM_ERASEFUNCTIONS];
 
-	enum blockprotect_func unlock;
 	enum printlock_func printlock;
+	enum blockprotect_func unlock;
 	enum write_func write;
 	enum read_func read;
 	struct voltage {
@@ -513,7 +513,9 @@ struct flashchip {
 	enum decode_range_func decode_range;
 };
 
-typedef int (*chip_restore_fn_cb_t)(struct flashctx *flash, uint8_t status);
+typedef int (*chip_restore_fn_cb_t)(struct flashctx *flash, void *data);
+typedef int (blockprotect_func_t)(struct flashctx *flash);
+blockprotect_func_t *lookup_blockprotect_func_ptr(const struct flashchip *const chip);
 
 struct flashrom_flashctx {
 	struct flashchip *chip;
@@ -534,6 +536,8 @@ struct flashrom_flashctx {
 		bool force_boardmismatch;
 		bool verify_after_write;
 		bool verify_whole_chip;
+		bool skip_unreadable_regions;
+		bool skip_unwritable_regions;
 	} flags;
 	/* We cache the state of the extended address register (highest byte
 	 * of a 4BA for 3BA instructions) and the state of the 4BA mode here.
@@ -546,7 +550,7 @@ struct flashrom_flashctx {
 	int chip_restore_fn_count;
 	struct chip_restore_func_data {
 		chip_restore_fn_cb_t func;
-		uint8_t status;
+		void *data;
 	} chip_restore_fn[MAX_CHIP_RESTORE_FUNCTIONS];
 	/* Progress reporting */
 	flashrom_progress_callback *progress_callback;
@@ -620,7 +624,14 @@ int read_buf_from_file(unsigned char *buf, unsigned long size, const char *filen
 int write_buf_to_file(const unsigned char *buf, unsigned long size, const char *filename);
 int prepare_flash_access(struct flashctx *, bool read_it, bool write_it, bool erase_it, bool verify_it);
 void finalize_flash_access(struct flashctx *);
-int register_chip_restore(chip_restore_fn_cb_t func, struct flashctx *flash, uint8_t status);
+int register_chip_restore(chip_restore_fn_cb_t func, struct flashctx *flash, void *data);
+int check_block_eraser(const struct flashctx *flash, int k, int log);
+unsigned int count_usable_erasers(const struct flashctx *flash);
+int need_erase(const uint8_t *have, const uint8_t *want, unsigned int len, enum write_granularity gran, const uint8_t erased_value);
+erasefunc_t *lookup_erase_func_ptr(const struct block_eraser *const eraser);
+int check_erased_range(struct flashctx *flash, unsigned int start, unsigned int len);
+unsigned int get_next_write(const uint8_t *have, const uint8_t *want, unsigned int len, unsigned int *first_start, enum write_granularity gran);
+int write_flash(struct flashctx *flash, const uint8_t *buf, unsigned int start, unsigned int len);
 
 /* Something happened that shouldn't happen, but we can go on. */
 #define ERROR_FLASHROM_NONFATAL 0x100
