@@ -219,8 +219,6 @@ extern const struct board_info laptops_known[];
 #endif
 
 /* udelay.c */
-void myusec_delay(unsigned int usecs);
-void myusec_calibrate_delay(void);
 void internal_sleep(unsigned int usecs);
 void default_delay(unsigned int usecs);
 
@@ -359,11 +357,13 @@ enum ich_chipset {
 	CHIPSET_400_SERIES_COMET_POINT,
 	CHIPSET_500_SERIES_TIGER_POINT,
 	CHIPSET_600_SERIES_ALDER_POINT,
-	CHIPSET_METEOR_LAKE,
 	CHIPSET_APOLLO_LAKE,
 	CHIPSET_GEMINI_LAKE,
 	CHIPSET_JASPER_LAKE,
 	CHIPSET_ELKHART_LAKE,
+	/* All chipsets after METEOR_LAKE should support checking BIOS_BM to get read/write access to of FREG0~15 */
+	CHIPSET_METEOR_LAKE,
+	CHIPSET_PANTHER_LAKE,
 };
 
 /* ichspi.c */
