@@ -6186,6 +6186,50 @@ const struct flashchip flashchips[] = {
 
 	{
 		.vendor		= "Fudan",
+		.name		= "FM25Q04",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= FUDAN_ID_NOPREFIX,
+		.model_id	= FUDAN_FM25Q04,
+		.total_size	= 512,
+		.page_size	= 256,
+		/* supports SFDP */
+		/* QPI enable 0x38, disable 0xFF */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
+		.tested		= TEST_UNTESTED,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	= {
+			{
+				/* 128 * 4KB sectors */
+				.eraseblocks = { {4 * 1024, 128} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				/* 16 * 32KB blocks */
+				.eraseblocks = { {32 * 1024, 16} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				/* 8 * 64KB blocks  */
+				.eraseblocks = { {64 * 1024, 8} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				/* Full chip erase (0x60)  */
+				.eraseblocks = { {512 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				/* Full chip erase (0xC7)  */
+				.eraseblocks = { {512 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			},
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP2_TB_BPL,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP2_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and multi I/O supported */
+		.voltage	= {2700, 3600},
+	},
+
+	{
+		.vendor		= "Fudan",
 		.name		= "FM25Q08",
 		.bustype	= BUS_SPI,
 		.manufacture_id	= FUDAN_ID_NOPREFIX,
@@ -6196,7 +6240,7 @@ const struct flashchip flashchips[] = {
 		/* OTP: 1024B total; read 0x48; write 0x42, erase 0x44, read ID 0x4B */
 		/* QPI enable 0x38, disable 0xFF */
 		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
-		.tested		= TEST_UNTESTED,
+		.tested		= TEST_OK_PREW,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	= {
@@ -6294,6 +6338,94 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_60,
 			}, {
 				.eraseblocks = { {4 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			},
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP2_TB_BPL, /* bit6 selects size of protected blocks; TODO: SR2 */
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP2_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and multi I/O supported */
+		.voltage	= {2700, 3600},
+	},
+
+	{
+		.vendor		= "Fudan",
+		.name		= "FM25Q64",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= FUDAN_ID_NOPREFIX,
+		.model_id	= FUDAN_FM25Q64,
+		.total_size	= 8192,
+		.page_size	= 256,
+		/* supports SFDP */
+		/* QPI enable 0x38, disable 0xFF */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
+		.tested		= TEST_UNTESTED,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	= {
+			{
+				/* 2048 * 4KB sectors */
+				.eraseblocks = { {4 * 1024, 2048} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				/* 256 * 32KB blocks */
+				.eraseblocks = { {32 * 1024, 256} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				/* 128 * 64KB blocks  */
+				.eraseblocks = { {64 * 1024, 128} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				/* Full chip erase (0x60)  */
+				.eraseblocks = { {8 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				/* Full chip erase (0xC7)  */
+				.eraseblocks = { {8 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			},
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP2_TB_BPL, /* bit6 selects size of protected blocks; TODO: SR2 */
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP2_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and multi I/O supported */
+		.voltage	= {2700, 3600},
+	},
+
+	{
+		.vendor		= "Fudan",
+		.name		= "FM25Q128",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= FUDAN_ID_NOPREFIX,
+		.model_id	= FUDAN_FM25Q128,
+		.total_size	= 16384,
+		.page_size	= 256,
+		/* supports SFDP */
+		/* QPI enable 0x38, disable 0xFF */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
+		.tested		= TEST_OK_PR,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	= {
+			{
+				/* 4096 * 4KB sectors */
+				.eraseblocks = { {4 * 1024, 4096} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				/* 512 * 32KB blocks */
+				.eraseblocks = { {32 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				/* 256 * 64KB blocks  */
+				.eraseblocks = { {64 * 1024, 256} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				/* Full chip erase (0x60)  */
+				.eraseblocks = { {16 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				/* Full chip erase (0xC7)  */
+				.eraseblocks = { {16 * 1024 * 1024, 1} },
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			},
 		},
@@ -6637,6 +6769,62 @@ const struct flashchip flashchips[] = {
 			.srl    = {STATUS2, 0, RW},
 			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}, {STATUS1, 5, RW}},
 			.tb    = {STATUS1, 6, RW}, /* Called BP4 in datasheet, acts like TB */
+			.cmp    = {STATUS2, 6, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
+	},
+
+	{
+		.vendor		= "GigaDevice",
+		.name		= "GD25LF512MF",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= GIGADEVICE_ID,
+		.model_id	= GIGADEVICE_GD25LF512MF,
+		.total_size	= 65536,
+		.page_size	= 256,
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_WRSR_EXT2 | FEATURE_4BA,
+		.tested		= TEST_OK_PREWB,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 16384} },
+				.block_erase = SPI_BLOCK_ERASE_21,
+			}, {
+				.eraseblocks = { {4 * 1024, 16384} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 2048} },
+				.block_erase = SPI_BLOCK_ERASE_5C,
+			}, {
+				.eraseblocks = { {32 * 1024, 2048} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_DC,
+			}, {
+				.eraseblocks = { {64 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {64 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {64 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP4_SRWD, /* TODO: 2nd status reg (read with 0x35) */
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP4_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {1695, 1950},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}, {STATUS1, 5, RW}},
+			.tb     = {STATUS1, 6, RW},	/* Called BP4 in datasheet, acts like TB */
+			.srl    = {STATUS2, 0, RW},
 			.cmp    = {STATUS2, 6, RW},
 		},
 		.decode_range	= DECODE_RANGE_SPI25,
@@ -7217,7 +7405,7 @@ const struct flashchip flashchips[] = {
 
 	{
 		.vendor		= "GigaDevice",
-		.name		= "GD25Q127C/GD25Q128E",
+		.name		= "GD25Q128E/GD25B128E/GD25R128E/GD25Q127C",
 		.bustype	= BUS_SPI,
 		.manufacture_id	= GIGADEVICE_ID,
 		.model_id	= GIGADEVICE_GD25Q128,
@@ -7395,14 +7583,13 @@ const struct flashchip flashchips[] = {
 
 	{
 		.vendor		= "GigaDevice",
-		.name		= "GD25Q256D/GD25Q256E",
+		.name		= "GD25Q256E/GD25B256E/GD25R256E/GD25Q256D",
 		.bustype	= BUS_SPI,
 		.manufacture_id	= GIGADEVICE_ID,
 		.model_id	= GIGADEVICE_GD25Q256D,
 		.total_size	= 32768,
 		.page_size	= 256,
-		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA |
-				  FEATURE_WRSR_EXT2 | FEATURE_WRSR2 | FEATURE_WRSR3,
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA | FEATURE_WRSR2 | FEATURE_WRSR3,
 		.tested		= TEST_OK_PREWB,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
@@ -7434,8 +7621,8 @@ const struct flashchip flashchips[] = {
 				.block_erase = SPI_BLOCK_ERASE_C7,
 			}
 		},
-		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD,
-		.unlock		= SPI_DISABLE_BLOCKPROTECT,
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP4_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP4_SRWD, /* TODO: 2nd status reg (read with 0x35) */
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {2700, 3600},
@@ -7444,7 +7631,63 @@ const struct flashchip flashchips[] = {
 			.srp    = {STATUS1, 7, RW},
 			.srl    = {STATUS2, 6, RW},
 			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}, {STATUS1, 5, RW}},
-			.tb     = {STATUS1, 6, RW},
+			.tb     = {STATUS1, 6, RW},	/* Called BP4 in datasheet, acts like TB */
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
+	},
+
+{
+		.vendor		= "GigaDevice",
+		.name		= "GD25B512MF/GD25R512MF",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= GIGADEVICE_ID,
+		.model_id	= GIGADEVICE_GD25B512MF,
+		.total_size	= 65536,
+		.page_size	= 256,
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_WRSR2 | FEATURE_WRSR3 | FEATURE_4BA,
+		.tested		= TEST_OK_PREWB,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 16384} },
+				.block_erase = SPI_BLOCK_ERASE_21,
+			}, {
+				.eraseblocks = { {4 * 1024, 16384} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 2048} },
+				.block_erase = SPI_BLOCK_ERASE_5C,
+			}, {
+				.eraseblocks = { {32 * 1024, 2048} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_DC,
+			}, {
+				.eraseblocks = { {64 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {64 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {64 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP4_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP4_SRWD,	/* TODO: 2nd status reg (read with 0x35) */
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.srl    = {STATUS2, 6, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}, {STATUS1, 5, RW}},
+			.tb     = {STATUS1, 6, RW},	/* Called BP4 in datasheet, acts like TB */
+			.cmp    = {STATUS3, 3, RW},
 		},
 		.decode_range	= DECODE_RANGE_SPI25,
 	},
@@ -7894,6 +8137,153 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and multi I/O supported */
 		.voltage	= {2300, 3600},
+	},
+
+{
+		.vendor		= "GigaDevice",
+		.name		= "GD25F64F",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= GIGADEVICE_ID,
+		.model_id	= GIGADEVICE_GD25F64F,
+		.total_size	= 8192,
+		.page_size	= 256,
+		/* OTP: 1024B total, 256B reserved; read 0x48; write 0x42, erase 0x44 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_WRSR2 | FEATURE_WRSR3,
+		.tested		= TEST_OK_PREWB,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 2048} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 256} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 128} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {8 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {8 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP4_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP4_SRWD, /* TODO: 2nd status reg (read with 0x35) */
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and multi I/O supported */
+		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.srp    = {STATUS1, 7, RW},
+			.srl    = {STATUS2, 0, RW},
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}},
+			.tb     = {STATUS1, 5, RW}, /* Called BP3 in datasheet, acts like TB */
+			.sec    = {STATUS1, 6, RW}, /* Called BP4 in datasheet, acts like SEC */
+			.cmp    = {STATUS3, 4, RW},
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
+	},
+
+{
+		.vendor		= "GigaDevice",
+		.name		= "GD25F128F",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= GIGADEVICE_ID,
+		.model_id	= GIGADEVICE_GD25F128F,
+		.total_size	= 16384,
+		.page_size	= 256,
+		/* OTP: 3x2048B; read 0x48; write 0x42, erase 0x44 */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_WRSR2 | FEATURE_WRSR3,
+		.tested		= TEST_OK_PREWB,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 4096} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 256} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {16 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {16 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP4_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP4_SRWD, /* TODO: 2nd status reg (read with 0x35) */
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ, /* Fast read (0x0B) and multi I/O supported */
+		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}, {STATUS1, 5, RW}},
+			.tb     = {STATUS1, 6, RW},	/* Called BP4 in datasheet, acts like TB */
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
+	},
+
+	{
+		.vendor		= "GigaDevice",
+		.name		= "GD25F256F",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= GIGADEVICE_ID,
+		.model_id	= GIGADEVICE_GD25F256F,
+		.total_size	= 32768,
+		.page_size	= 256,
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI | FEATURE_WRSR2 | FEATURE_WRSR3 | FEATURE_4BA,
+		.tested		= TEST_OK_PREWB,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 8192} },
+				.block_erase = SPI_BLOCK_ERASE_21,
+			}, {
+				.eraseblocks = { {4 * 1024, 8192} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_5C,
+			}, {
+				.eraseblocks = { {32 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_DC,
+			}, {
+				.eraseblocks = { {64 * 1024, 512} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {32 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {32 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP4_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT_BP4_SRWD,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {2700, 3600},
+		.reg_bits	=
+		{
+			.bp     = {{STATUS1, 2, RW}, {STATUS1, 3, RW}, {STATUS1, 4, RW}, {STATUS1, 5, RW}},
+			.tb     = {STATUS1, 6, RW},	/* Called BP4 in datasheet, acts like TB */
+		},
+		.decode_range	= DECODE_RANGE_SPI25,
 	},
 
 	{
@@ -18775,7 +19165,7 @@ const struct flashchip flashchips[] = {
 		/* 4 x 256B Security Region (OTP) */
 		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_WRSR_EXT3 | FEATURE_OTP |
 				  FEATURE_4BA_ENTER | FEATURE_4BA_NATIVE,
-		.tested		= TEST_UNTESTED,
+		.tested		= TEST_OK_PREW,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	=
@@ -19980,6 +20370,52 @@ const struct flashchip flashchips[] = {
 		.write		= SPI_CHIP_WRITE256,
 		.read		= SPI_CHIP_READ,
 		.voltage	= {1650, 1950},
+	},
+
+	{
+		.vendor		= "Winbond",
+		.name		= "W25R512NW/W74M51NW",
+		.bustype	= BUS_SPI,
+		.manufacture_id	= WINBOND_NEX_ID,
+		.model_id	= WINBOND_NEX_W25R512NW,
+		.total_size	= 65536,
+		.page_size	= 256,
+		/* supports SFDP */
+		/* OTP: 3X256B; read 0x48; write 0x42, erase 0x44, read ID 0x4B */
+		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_4BA,
+		.tested		= TEST_OK_PREW,
+		.probe		= PROBE_SPI_RDID,
+		.probe_timing	= TIMING_ZERO,
+		.block_erasers	=
+		{
+			{
+				.eraseblocks = { {4 * 1024, 16384} },
+				.block_erase = SPI_BLOCK_ERASE_21,
+			}, {
+				.eraseblocks = { {4 * 1024, 16384} },
+				.block_erase = SPI_BLOCK_ERASE_20,
+			}, {
+				.eraseblocks = { {32 * 1024, 2048} },
+				.block_erase = SPI_BLOCK_ERASE_52,
+			}, {
+				.eraseblocks = { {64 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_DC,
+			}, {
+				.eraseblocks = { {64 * 1024, 1024} },
+				.block_erase = SPI_BLOCK_ERASE_D8,
+			}, {
+				.eraseblocks = { {64 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_60,
+			}, {
+				.eraseblocks = { {64 * 1024 * 1024, 1} },
+				.block_erase = SPI_BLOCK_ERASE_C7,
+			}
+		},
+		.printlock	= SPI_PRETTYPRINT_STATUS_REGISTER_BP3_SRWD,
+		.unlock		= SPI_DISABLE_BLOCKPROTECT,
+		.write		= SPI_CHIP_WRITE256,
+		.read		= SPI_CHIP_READ,
+		.voltage	= {1700, 1950},
 	},
 
 	{
@@ -22443,14 +22879,14 @@ const struct flashchip flashchips[] = {
 
 	{
 		.vendor		= "XMC",
-		.name		= "XM25QU64C",
+		.name		= "XM25QU64C/XM25LU64C",
 		.bustype	= BUS_SPI,
 		.manufacture_id	= ST_ID,
 		.model_id	= XMC_XM25QU64C,
 		.total_size	= 8192,
 		.page_size	= 256,
 		.feature_bits	= FEATURE_WRSR_WREN | FEATURE_OTP | FEATURE_QPI,
-		.tested		= TEST_UNTESTED,
+		.tested		= TEST_OK_PREW,
 		.probe		= PROBE_SPI_RDID,
 		.probe_timing	= TIMING_ZERO,
 		.block_erasers	=
@@ -23086,7 +23522,7 @@ const struct flashchip flashchips[] = {
 		/* We present our own "report this" text hence we do not */
 		/* want the default "This flash part has status UNTESTED..." */
 		/* text to be printed. */
-		.tested		= TEST_OK_PREW,
+		.tested		= { .probe = OK, .read = OK, .erase = OK, .write = OK, .wp = NA },
 		.probe		= PROBE_SPI_SFDP,
 		.block_erasers	= {}, /* set by probing function */
 		.unlock		= SPI_DISABLE_BLOCKPROTECT, /* is this safe? */

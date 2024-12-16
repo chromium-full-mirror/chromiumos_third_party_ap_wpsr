@@ -25,6 +25,13 @@
 
 #include "flash.h"	/* for chipaddr and flashctx */
 
+
+/*
+ * This function returns 'true' if current flashrom invocation is programming
+ * the EC.
+ */
+bool programming_ec(void);
+
 enum programmer_type {
 	PCI = 1, /* to detect uninitialized values */
 	USB,
@@ -100,6 +107,8 @@ extern const struct programmer_entry programmer_serprog;
 extern const struct programmer_entry programmer_stlinkv3_spi;
 extern const struct programmer_entry programmer_usbblaster_spi;
 extern const struct programmer_entry programmer_dirtyjtag_spi;
+
+extern const struct programmer_entry programmer_cros_ec;
 
 int programmer_init(const struct programmer_entry *prog, const char *param);
 int programmer_shutdown(void);
@@ -274,6 +283,7 @@ extern bool force_boardmismatch;
 void probe_superio(void);
 int register_superio(struct superio s);
 extern enum chipbustype internal_buses_supported;
+int internal_init(const struct programmer_cfg *cfg);
 #endif
 
 /* bitbang_spi.c */
@@ -357,6 +367,7 @@ enum ich_chipset {
 	CHIPSET_400_SERIES_COMET_POINT,
 	CHIPSET_500_SERIES_TIGER_POINT,
 	CHIPSET_600_SERIES_ALDER_POINT,
+	CHIPSET_700_SERIES_RAPTOR_POINT,
 	CHIPSET_APOLLO_LAKE,
 	CHIPSET_GEMINI_LAKE,
 	CHIPSET_JASPER_LAKE,
@@ -471,6 +482,18 @@ typedef HANDLE fdtype;
 typedef int fdtype;
 #define SER_INV_FD	-1
 #endif
+
+/* cros_ec.c */
+/**
+ * Probe the Google Chrome OS EC device
+ *
+ * @return 0 if found correct, non-zero if not found or error
+ */
+int cros_ec_need_2nd_pass(void);
+bool cros_ec_erasure_failed(void);
+int cros_ec_finish(void);
+int cros_ec_prepare(struct flashctx *flash, const uint8_t *const image, uint32_t flash_size);
+int cros_ec_block_erase(struct flashctx *flash, unsigned int blockaddr, unsigned int len);
 
 void sp_flush_incoming(void);
 fdtype sp_openserport(char *dev, int baud);

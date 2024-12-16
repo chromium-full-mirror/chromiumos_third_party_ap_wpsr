@@ -115,6 +115,8 @@ enum flashrom_test_state {
 struct flashrom_flashchip_info {
 	const char *vendor;
 	const char *name;
+	uint32_t manufacture_id;
+	uint32_t model_id;
 	unsigned int total_size;
 	struct flashrom_tested {
 		enum flashrom_test_state probe;
@@ -229,6 +231,13 @@ int flashrom_flash_probe(struct flashrom_flashctx **flashctx, const struct flash
  * @return Size of flash chip in bytes.
  */
 size_t flashrom_flash_getsize(const struct flashrom_flashctx *flashctx);
+/**
+ * @brief Returns the info of the specified flash chip within the flashctx.
+ *
+ * @param flashctx The queried flash context.
+ * @param[out] A reference of flashchip_info structure is provided to be filled.
+ */
+void flashrom_flash_getinfo(const struct flashrom_flashctx *const flashctx, struct flashrom_flashchip_info *info);
 /**
  * @brief Erase the specified ROM chip.
  *

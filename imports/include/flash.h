@@ -148,6 +148,14 @@ enum write_granularity {
  * other flash chips, such as the ENE KB9012 internal flash, work the opposite way.
  */
 #define FEATURE_ERASED_ZERO	(1 << 18)
+/*
+ * Feature indicates that the chip does not require erase before writing:
+ * write operations can set any bit to any value without first doing an erase,
+ * but bulk erase operations may still be supported.
+ *
+ * EEPROMs usually behave this way (compare to Flash, which requires erase),
+ * for example the ST M95M02.
+ */
 #define FEATURE_NO_ERASE	(1 << 19)
 
 #define FEATURE_WRSR_EXT2	(1 << 20)
@@ -266,15 +274,9 @@ enum write_func {
 	WRITE_82802AB,
 	WRITE_EN29LV640B,
 	EDI_CHIP_WRITE,
-#ifdef FLASHROM_TEST
 	TEST_WRITE_INJECTOR, /* special case must come last. */
-#endif
 };
 typedef int (write_func_t)(struct flashctx *flash, const uint8_t *buf, unsigned int start, unsigned int len);
-
-#ifdef FLASHROM_TEST
-extern write_func_t *g_test_write_injector;
-#endif
 
 enum read_func {
 	NO_READ_FUNC = 0, /* 0 indicates no read function set. */
@@ -284,16 +286,10 @@ enum read_func {
 	EDI_CHIP_READ,
 	SPI_READ_AT45DB,
 	SPI_READ_AT45DB_E8,
-#ifdef FLASHROM_TEST
 	TEST_READ_INJECTOR, /* special case must come last. */
-#endif
 };
 typedef int (read_func_t)(struct flashctx *flash, uint8_t *buf, unsigned int start, unsigned int len);
 int read_flash(struct flashctx *flash, uint8_t *buf, unsigned int start, unsigned int len);
-
-#ifdef FLASHROM_TEST
-extern read_func_t *g_test_read_injector;
-#endif
 
 enum block_erase_func {
 	NO_BLOCK_ERASE_FUNC = 0, /* 0 indicates no block erase function set. */
@@ -331,20 +327,9 @@ enum block_erase_func {
 	ERASE_SECTOR_49LFXXXC,
 	STM50_SECTOR_ERASE,
 	EDI_CHIP_BLOCK_ERASE,
-#ifdef FLASHROM_TEST
-	/* special cases must come last. */
-	TEST_ERASE_INJECTOR_1,
-	TEST_ERASE_INJECTOR_2,
-	TEST_ERASE_INJECTOR_3,
-	TEST_ERASE_INJECTOR_4,
-	TEST_ERASE_INJECTOR_5,
-#endif
+	CROS_EC_BLOCK_ERASE,
+	TEST_ERASE_INJECTOR, /* special case must come last. */
 };
-
-#ifdef FLASHROM_TEST
-#define NUM_TEST_ERASE_INJECTORS 5
-extern erasefunc_t *g_test_erase_injector[NUM_TEST_ERASE_INJECTORS];
-#endif
 
 enum blockprotect_func {
 	NO_BLOCKPROTECT_FUNC = 0, /* 0 indicates no unlock function set. */
@@ -629,6 +614,9 @@ char *strndup(const char *str, size_t size);
 size_t strnlen(const char *str, size_t n);
 #endif
 
+/* flashchips_crosbl.c */
+bool is_chipname_duplicate(const struct flashchip *chip);
+
 /* flashrom.c */
 extern const char flashrom_version[];
 char *flashbuses_to_text(enum chipbustype bustype);
@@ -656,6 +644,8 @@ erasefunc_t *lookup_erase_func_ptr(const struct block_eraser *const eraser);
 int check_erased_range(struct flashctx *flash, unsigned int start, unsigned int len);
 unsigned int get_next_write(const uint8_t *have, const uint8_t *want, unsigned int len, unsigned int *first_start, enum write_granularity gran);
 int write_flash(struct flashctx *flash, const uint8_t *buf, unsigned int start, unsigned int len);
+
+erasefunc_t *lookup_erase_func_ptr(const struct block_eraser *const eraser);
 
 /* Something happened that shouldn't happen, but we can go on. */
 #define ERROR_FLASHROM_NONFATAL 0x100
