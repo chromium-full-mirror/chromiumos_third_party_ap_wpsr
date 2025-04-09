@@ -550,6 +550,7 @@
 #define MACRONIX_MX25L6495F	0x9517
 #define MACRONIX_MX25L3255E	0x9e16
 #define MACRONIX_MX77L25650F	0x7519
+#define MACRONIX_MX77U25650F	0x7539
 #define MACRONIX_MX77U51250F	0x753A
 #define MACRONIX_MX25L3239E     0x2536
 
@@ -701,7 +702,6 @@
 #define SPANSION_S25FL064A	0x0216	/* Same as S25FL064P, but the latter supports EDI and CFI */
 #define SPANSION_S25FL128	0x2018	/* Same ID for various S25FL127S, S25FL128P, S25FL128S and S25FL129P (including dual-die S70FL256P) variants (EDI supported) */
 #define SPANSION_S25FL256	0x0219
-#define SPANSION_S25FL512	0x0220
 #define SPANSION_S25FL204	0x4013
 #define SPANSION_S25FL208	0x4014
 #define SPANSION_S25FL216	0x4015	/* Same as S25FL216K, but the latter supports OTP, 3 status regs, quad I/O, SFDP etc. */
@@ -710,6 +710,7 @@
 #define SPANSION_S25FL164K	0x4017
 #define SPANSION_S25FL128L	0x6018
 #define SPANSION_S25FL256L	0x6019
+#define SPANSION_S25FL512S_UL	0x02200080  /* Uniform Large (256kB) sectors */
 #define SPANSION_S25FS128S_L	0x20180081  /* Large sectors. */
 #define SPANSION_S25FS128S_S	0x20180181  /* Small sectors. */
 #define SPANSION_S25FS256S_L	0x02190081  /* Large sectors. */
@@ -718,6 +719,7 @@
 #define SPANSION_S25FL128S_US	0x20180180  /* Uniform Small (64kB) sectors */
 #define SPANSION_S25FL256S_UL	0x02190080  /* Uniform Large (128kB) sectors */
 #define SPANSION_S25FL256S_US	0x02190180  /* Uniform Small (64kB) sectors */
+#define SPANSION_S25FS512S_UL	0x02200081  /* Uniform Large (256kB) sectors */
 
 /* Spansion 29GL families got a suffix indicating the process technology but share the same 3-Byte IDs. They can
  * however be differentiated by CFI byte 45h. Some versions exist which have special top or bottom boot sectors
@@ -863,6 +865,7 @@
 #define XMC_XM25QU16C		0x5015
 #define XMC_XM25QH32C		0x4016	/* Same as XM25QH32D */
 #define XMC_XM25QU32C		0x5016
+#define XMC_XM25QH64A   	0x7017
 #define XMC_XM25QH128A		0x7018
 #define XMC_XM25QH128C		0x4018	/* Same as XM25QH128D */
 #define XMC_XM25QU128C		0x4118	/* Same as XM25QU128D */
